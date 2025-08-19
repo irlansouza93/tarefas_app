@@ -1,167 +1,545 @@
-<!DOCTYPE html><html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Listas do Casal</title>
+  <!-- Importar Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
-    body {
-      font-family: Arial, sans-serif;
+    :root {
+      --primary: #6a11cb;
+      --primary-light: #8e2de2;
+      --secondary: #2575fc;
+      --accent: #ff6b6b;
+      --light: #f8f9fa;
+      --dark: #343a40;
+      --gray: #6c757d;
+      --success: #28a745;
+      --border-radius: 16px;
+      --shadow: 0 8px 24px rgba(0,0,0,0.1);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      background: #f5f5f5;
-      color: #333;
     }
+    
+    body {
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--dark);
+      min-height: 100vh;
+      padding-bottom: 2rem;
+    }
+    
     header {
-      background: #4a90e2;
-      color: #fff;
-      padding: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: white;
+      padding: 1.5rem;
       text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    .container {
+    
+    header h1 {
+      font-weight: 600;
+      font-size: 2.2rem;
+      letter-spacing: 1px;
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .status-bar {
       display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      padding: 1rem;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 1rem;
+      margin-bottom: 1.5rem;
+      color: white;
+      font-size: 0.9rem;
     }
+    
+    .connection-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .status-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+    
+    .status-indicator.offline {
+      background-color: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+    
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+      padding: 0 1.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
     .lista {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      flex: 1 1 300px;
-      padding: 1rem;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem;
       display: flex;
       flex-direction: column;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
     }
+    
+    .lista:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+    }
+    
+    .lista::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary-light), var(--secondary));
+    }
+    
     .lista h2 {
-      margin: 0 0 0.5rem 0;
+      margin: 0 0 1rem 0;
+      font-weight: 600;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
+    
+    .lista h2 i {
+      color: var(--secondary);
+    }
+    
     ul {
       list-style: none;
       padding: 0;
       margin: 0;
+      flex-grow: 1;
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
     }
+    
+    ul::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    ul::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.05);
+      border-radius: 10px;
+    }
+    
+    ul::-webkit-scrollbar-thumb {
+      background: var(--primary-light);
+      border-radius: 10px;
+    }
+    
     li {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.5rem;
-      border-bottom: 1px solid #eee;
+      padding: 0.75rem;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      transition: var(--transition);
+      border-radius: 8px;
+      animation: fadeIn 0.4s ease-out;
     }
+    
+    li:hover {
+      background: rgba(106, 17, 203, 0.05);
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
     li.done span {
       text-decoration: line-through;
-      color: gray;
+      color: var(--gray);
     }
-    button {
-      background: #4a90e2;
-      color: #fff;
-      border: none;
-      padding: 0.3rem 0.6rem;
-      border-radius: 8px;
+    
+    .item-content {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-grow: 1;
       cursor: pointer;
     }
-    button:hover {
-      background: #357ab7;
-    }
-    .add-item {
+    
+    .item-content .checkmark {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--gray);
       display: flex;
-      margin-top: 0.5rem;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+    
+    li.done .checkmark {
+      background: var(--success);
+      border-color: var(--success);
+    }
+    
+    li.done .checkmark::after {
+      content: '✓';
+      color: white;
+      font-size: 12px;
+    }
+    
+    .actions {
+      display: flex;
       gap: 0.5rem;
     }
+    
+    .btn {
+      background: transparent;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      color: var(--gray);
+    }
+    
+    .btn:hover {
+      background: rgba(0,0,0,0.05);
+      color: var(--accent);
+    }
+    
+    .btn i {
+      font-size: 18px;
+    }
+    
+    .add-item {
+      display: flex;
+      margin-top: 1rem;
+      gap: 0.75rem;
+    }
+    
     .add-item input {
       flex: 1;
-      padding: 0.4rem;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.1);
+      background: rgba(255,255,255,0.7);
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+    
+    .add-item input:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.2);
+    }
+    
+    .btn-add {
+      background: var(--primary-light);
+      color: white;
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 4px 10px rgba(106, 17, 203, 0.3);
+    }
+    
+    .btn-add:hover {
+      background: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(106, 17, 203, 0.4);
+    }
+    
+    .btn-add i {
+      font-size: 24px;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--gray);
+    }
+    
+    .empty-state i {
+      font-size: 3rem;
+      opacity: 0.3;
+      margin-bottom: 1rem;
+    }
+    
+    .footer {
+      text-align: center;
+      color: rgba(255,255,255,0.7);
+      margin-top: 3rem;
+      font-size: 0.9rem;
+    }
+    
+    .pulse {
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+        padding: 0 1rem;
+      }
+      
+      header h1 {
+        font-size: 1.8rem;
+      }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Listas do Casal</h1>
+    <h1><i class="material-icons">favorite</i> Listas do Casal</h1>
   </header>
+  
+  <div class="status-bar">
+    <div class="connection-status">
+      <div class="status-indicator" id="status-indicator"></div>
+      <span id="status-text">Conectando ao servidor...</span>
+    </div>
+    <div id="last-updated">Última atualização: --:--:--</div>
+  </div>
+  
   <div class="container" id="listas-container">
     <!-- Listas serão renderizadas aqui -->
-  </div>  <script>
-    const listasIniciais = [
-      {nome: "Tarefas Diárias Casal", itens: []},
-      {nome: "Tarefas Esposa", itens: []},
-      {nome: "Tarefas Esposo", itens: []},
-      {nome: "Compras da Semana", itens: []},
-      {nome: "Compras do Mês", itens: []},
-      {nome: "Lista de Sonhos", itens: []}
-    ];
+    <div class="lista pulse" style="height: 300px; background: rgba(255,255,255,0.7);">
+      <div class="empty-state">
+        <i class="material-icons">hourglass_empty</i>
+        <p>Carregando suas listas...</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <p>Sincronização em tempo real com Firebase | Desenvolvido com ❤️ para casais</p>
+  </div>
 
-    function salvar() {
-      localStorage.setItem('listasCasal', JSON.stringify(listasIniciais));
-    }
-
-    function carregar() {
-      const dados = localStorage.getItem('listasCasal');
-      if (dados) {
-        return JSON.parse(dados);
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  
+  <script>
+    // Configuração do Firebase (substitua com suas credenciais)
+   const firebaseConfig = {
+  apiKey: "AIzaSyDa8KrTqqA6fmPDNRrha074cDhCGXaLB_o",
+  authDomain: "tarefas-app-e3e0c.firebaseapp.com",
+  databaseURL: "https://tarefas-app-e3e0c-default-rtdb.firebaseio.com",
+  projectId: "tarefas-app-e3e0c",
+  storageBucket: "tarefas-app-e3e0c.firebasestorage.app",
+  messagingSenderId: "1005383302041",
+  appId: "1:1005383302041:web:852b17f5bca487d364f108"
+};
+    
+    // Inicializar Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    
+    // Referência para os dados no Firebase
+    const listasRef = database.ref('listasCasal');
+    
+    // Elementos do DOM
+    const listasContainer = document.getElementById("listas-container");
+    const statusIndicator = document.getElementById("status-indicator");
+    const statusText = document.getElementById("status-text");
+    const lastUpdated = document.getElementById("last-updated");
+    
+    // Estado do aplicativo
+    let listas = [];
+    
+    // Atualizar status de conexão
+    database.ref(".info/connected").on("value", (snapshot) => {
+      if (snapshot.val() === true) {
+        statusIndicator.classList.remove("offline");
+        statusText.textContent = "Conectado";
+      } else {
+        statusIndicator.classList.add("offline");
+        statusText.textContent = "Offline - Reconectando...";
       }
-      return listasIniciais;
+    });
+    
+    // Atualizar última conexão
+    database.ref(".info/serverTimeOffset").on("value", (snapshot) => {
+      const offset = snapshot.val() || 0;
+      const now = new Date(Date.now() + offset);
+      lastUpdated.textContent = `Última atualização: ${now.toLocaleTimeString()}`;
+    });
+    
+    // Carregar dados do Firebase
+    listasRef.on("value", (snapshot) => {
+      const data = snapshot.val();
+      
+      if (data) {
+        listas = data;
+        render();
+      } else {
+        // Se não houver dados, inicializar com listas padrão
+        listas = [
+          {nome: "Tarefas Diárias Casal", itens: []},
+          {nome: "Tarefas Esposa", itens: []},
+          {nome: "Tarefas Esposo", itens: []},
+          {nome: "Compras da Semana", itens: []},
+          {nome: "Compras do Mês", itens: []},
+          {nome: "Lista de Sonhos", itens: []}
+        ];
+        salvarNoFirebase();
+      }
+    });
+    
+    // Função para salvar no Firebase
+    function salvarNoFirebase() {
+      listasRef.set(listas)
+        .then(() => console.log("Dados salvos com sucesso!"))
+        .catch((error) => console.error("Erro ao salvar:", error));
     }
-
-    let listas = carregar();
-
+    
+    // Função para renderizar as listas
     function render() {
-      const container = document.getElementById("listas-container");
-      container.innerHTML = "";
+      listasContainer.innerHTML = "";
+      
       listas.forEach((lista, idx) => {
         const div = document.createElement("div");
         div.className = "lista";
-        div.innerHTML = `<h2>${lista.nome}</h2>`;
-
+        div.innerHTML = `
+          <h2>
+            <i class="material-icons">${getListIcon(lista.nome)}</i>
+            ${lista.nome}
+          </h2>
+        `;
+        
         const ul = document.createElement("ul");
-        lista.itens.forEach((item, i) => {
-          const li = document.createElement("li");
-          li.className = item.done ? "done" : "";
-
-          const span = document.createElement("span");
-          span.textContent = item.texto;
-          span.onclick = () => {
-            item.done = !item.done;
-            salvar();
-            render();
-          };
-
-          const btnDel = document.createElement("button");
-          btnDel.textContent = "X";
-          btnDel.onclick = () => {
-            lista.itens.splice(i, 1);
-            salvar();
-            render();
-          };
-
-          li.appendChild(span);
-          li.appendChild(btnDel);
-          ul.appendChild(li);
-        });
-
+        
+        if (lista.itens.length === 0) {
+          const empty = document.createElement("div");
+          empty.className = "empty-state";
+          empty.innerHTML = `
+            <i class="material-icons">checklist</i>
+            <p>Nenhum item nesta lista</p>
+          `;
+          ul.appendChild(empty);
+        } else {
+          lista.itens.forEach((item, i) => {
+            const li = document.createElement("li");
+            li.className = item.done ? "done" : "";
+            
+            li.innerHTML = `
+              <div class="item-content">
+                <div class="checkmark"></div>
+                <span>${item.texto}</span>
+              </div>
+              <div class="actions">
+                <button class="btn btn-delete" title="Excluir">
+                  <i class="material-icons">delete</i>
+                </button>
+              </div>
+            `;
+            
+            // Marcar como feito/não feito
+            li.querySelector('.item-content').addEventListener('click', () => {
+              item.done = !item.done;
+              salvarNoFirebase();
+            });
+            
+            // Excluir item
+            li.querySelector('.btn-delete').addEventListener('click', (e) => {
+              e.stopPropagation();
+              lista.itens.splice(i, 1);
+              salvarNoFirebase();
+            });
+            
+            ul.appendChild(li);
+          });
+        }
+        
         const addDiv = document.createElement("div");
         addDiv.className = "add-item";
-        const input = document.createElement("input");
-        input.placeholder = "Novo item...";
-        const btnAdd = document.createElement("button");
-        btnAdd.textContent = "+";
-        btnAdd.onclick = () => {
+        addDiv.innerHTML = `
+          <input type="text" placeholder="Adicionar novo item..." class="new-item-input">
+          <button class="btn-add" title="Adicionar">
+            <i class="material-icons">add</i>
+          </button>
+        `;
+        
+        const input = addDiv.querySelector('.new-item-input');
+        const btnAdd = addDiv.querySelector('.btn-add');
+        
+        // Adicionar item
+        btnAdd.addEventListener('click', () => {
           if (input.value.trim() !== "") {
             lista.itens.push({texto: input.value, done: false});
             input.value = "";
-            salvar();
-            render();
+            salvarNoFirebase();
           }
-        };
-        addDiv.appendChild(input);
-        addDiv.appendChild(btnAdd);
-
+        });
+        
+        // Adicionar com Enter
+        input.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            btnAdd.click();
+          }
+        });
+        
         div.appendChild(ul);
         div.appendChild(addDiv);
-        container.appendChild(div);
+        listasContainer.appendChild(div);
       });
     }
-
-    render();
-  </script></body>
-</html>
+    
+    // Obter ícone apropriado para cada lista
+    function getListIcon(nome) {
+      if (nome.includes('Diárias')) return 'event';
+      if (nome.includes('Esposa') || nome.includes('Esposo')) return 'person';
+      if (nome.includes('Compras')) return 'shopping_cart';
+      if (nome.includes('Sonhos')) return 'star';
+      return 'list';
+    }
+  </script>
+</body>
+  </html>
