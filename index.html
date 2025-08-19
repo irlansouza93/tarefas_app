@@ -429,31 +429,52 @@
     
     // Carregar dados
     function loadData() {
-      listasRef.once("value")
-        .then((snapshot) => {
-          const data = snapshot.val();
-          
-          if (data) {
-            listas = data;
-            renderListas();
-          } else {
-            // Se não houver dados, inicializar com listas padrão
-            listas = [
-              {nome: "Tarefas Diárias Casal", itens: []},
-              {nome: "Tarefas Esposa", itens: []},
-              {nome: "Tarefas Esposo", itens: []},
-              {nome: "Compras da Semana", itens: []},
-              {nome: "Compras do Mês", itens: []},
-              {nome: "Lista de Sonhos", itens: []}
-            ];
-            salvarNoFirebase();
-          }
-        })
-        .catch((error) => {
-          console.error("Erro ao carregar dados:", error);
-          showError();
-        });
-    }
+  listasRef.once("value")
+    .then((snapshot) => {
+      const data = snapshot.val();
+      
+      // Verifica e corrige a estrutura dos dados
+      if (data) {
+        listas = Array.isArray(data) ? 
+          data.map(item => ({
+            nome: item.nome || item.none || "Lista sem nome", // Corrige "none" para "nome"
+            itens: item.itens || []
+          })) : [];
+        
+        // Se estiver vazio ou corrigido, salva a estrutura correta
+        if (listas.length === 0 || data[0].none) {
+          listas = [
+            {nome: "Tarefas Diárias Casal", itens: []},
+            {nome: "Tarefas Esposa", itens: []},
+            {nome: "Tarefas Esposo", itens: []},
+            {nome: "Compras da Semana", itens: []},
+            {nome: "Compras do Mês", itens: []},
+            {nome: "Lista de Sonhos", itens: []}
+          ];
+          return salvarNoFirebase();
+        }
+        renderListas();
+      } else {
+        initializeDefaultLists();
+      }
+    })
+    .catch((error) => {
+      console.error("Erro ao carregar:", error);
+      showError();
+    });
+}
+
+function initializeDefaultLists() {
+  listas = [
+    {nome: "Tarefas Diárias Casal", itens: []},
+    {nome: "Tarefas Esposa", itens: []},
+    {nome: "Tarefas Esposo", itens: []},
+    {nome: "Compras da Semana", itens: []},
+    {nome: "Compras do Mês", itens: []},
+    {nome: "Lista de Sonhos", itens: []}
+  ];
+  salvarNoFirebase();
+}
     
     // Mostrar erro
     function showError() {
