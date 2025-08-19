@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Listas do Casal</title>
+  <!-- Importar Material Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     :root {
       --primary: #6a11cb;
@@ -20,86 +20,334 @@
       --shadow: 0 8px 24px rgba(0,0,0,0.1);
       --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
-    /* [Seu CSS existente permanece aqui...] */
-
-    /* Novos estilos adicionados */
-    .checkmark {
-      transition: var(--transition);
-      transform-origin: center;
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-    li.done .checkmark {
-      animation: checkmarkPop 0.4s ease;
-    }
-    @keyframes checkmarkPop {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.3); }
-      100% { transform: scale(1); }
-    }
-    .list-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-    }
-    .list-actions .btn {
-      background: rgba(0,0,0,0.05);
+    
+    body {
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
       color: var(--dark);
+      min-height: 100vh;
+      padding-bottom: 2rem;
     }
-    .color-picker {
+    
+    header {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    header h1 {
+      font-weight: 600;
+      font-size: 2.2rem;
+      letter-spacing: 1px;
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .status-bar {
       display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 1rem;
+      margin-bottom: 1.5rem;
+      color: white;
+      font-size: 0.9rem;
+    }
+    
+    .connection-status {
+      display: flex;
+      align-items: center;
       gap: 0.5rem;
-      margin-top: 1rem;
     }
-    .color-option {
-      width: 24px;
-      height: 24px;
+    
+    .status-indicator {
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
-      cursor: pointer;
-      border: 2px solid transparent;
+      background-color: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+    
+    .status-indicator.offline {
+      background-color: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+    
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+      padding: 0 1.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    .lista {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
       transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
     }
-    .color-option.selected {
-      border-color: var(--dark);
-      transform: scale(1.1);
+    
+    .lista:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.15);
     }
-    .modal {
-      position: fixed;
+    
+    .lista::before {
+      content: '';
+      position: absolute;
       top: 0;
       left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.5);
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary-light), var(--secondary));
+    }
+    
+    .lista h2 {
+      margin: 0 0 1rem 0;
+      font-weight: 600;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .lista h2 i {
+      color: var(--secondary);
+    }
+    
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      flex-grow: 1;
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+    
+    ul::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    ul::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.05);
+      border-radius: 10px;
+    }
+    
+    ul::-webkit-scrollbar-thumb {
+      background: var(--primary-light);
+      border-radius: 10px;
+    }
+    
+    li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      transition: var(--transition);
+      border-radius: 8px;
+      animation: fadeIn 0.4s ease-out;
+    }
+    
+    li:hover {
+      background: rgba(106, 17, 203, 0.05);
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    li.done span {
+      text-decoration: line-through;
+      color: var(--gray);
+    }
+    
+    .item-content {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-grow: 1;
+      cursor: pointer;
+    }
+    
+    .item-content .checkmark {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--gray);
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 1000;
-      opacity: 0;
-      pointer-events: none;
       transition: var(--transition);
     }
-    .modal.active {
-      opacity: 1;
-      pointer-events: all;
+    
+    li.done .checkmark {
+      background: var(--success);
+      border-color: var(--success);
     }
-    .modal-content {
-      background: white;
-      padding: 2rem;
-      border-radius: var(--border-radius);
-      width: 90%;
-      max-width: 500px;
-      transform: translateY(20px);
-      transition: var(--transition);
+    
+    li.done .checkmark::after {
+      content: '✓';
+      color: white;
+      font-size: 12px;
     }
-    .modal.active .modal-content {
-      transform: translateY(0);
-    }
-    .modal-actions {
+    
+    .actions {
       display: flex;
-      justify-content: flex-end;
-      gap: 1rem;
-      margin-top: 1.5rem;
+      gap: 0.5rem;
     }
-    /* [Restante do CSS original permanece aqui...] */
+    
+    .btn {
+      background: transparent;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      color: var(--gray);
+    }
+    
+    .btn:hover {
+      background: rgba(0,0,0,0.05);
+      color: var(--accent);
+    }
+    
+    .btn i {
+      font-size: 18px;
+    }
+    
+    .add-item {
+      display: flex;
+      margin-top: 1rem;
+      gap: 0.75rem;
+    }
+    
+    .add-item input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.1);
+      background: rgba(255,255,255,0.7);
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+    
+    .add-item input:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.2);
+    }
+    
+    .btn-add {
+      background: var(--primary-light);
+      color: white;
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 4px 10px rgba(106, 17, 203, 0.3);
+    }
+    
+    .btn-add:hover {
+      background: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(106, 17, 203, 0.4);
+    }
+    
+    .btn-add i {
+      font-size: 24px;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--gray);
+    }
+    
+    .empty-state i {
+      font-size: 3rem;
+      opacity: 0.3;
+      margin-bottom: 1rem;
+    }
+    
+    .empty-state button {
+      background: var(--primary-light);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      margin-top: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .empty-state button:hover {
+      background: var(--primary);
+    }
+    
+    .footer {
+      text-align: center;
+      color: rgba(255,255,255,0.7);
+      margin-top: 3rem;
+      font-size: 0.9rem;
+    }
+    
+    .pulse {
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+        padding: 0 1rem;
+      }
+      
+      header h1 {
+        font-size: 1.8rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -128,36 +376,12 @@
     <p>Sincronização em tempo real com Firebase | Desenvolvido com ❤️ para casais</p>
   </div>
 
-  <!-- Modal para Nova/Editar Lista -->
-  <div class="modal" id="list-modal">
-    <div class="modal-content">
-      <h2 id="modal-title">Nova Lista</h2>
-      <div class="form-group">
-        <label for="list-name">Nome da Lista</label>
-        <input type="text" id="list-name" placeholder="Ex: Lista de Compras">
-      </div>
-      <div class="form-group">
-        <label>Cor da Lista</label>
-        <div class="color-picker" id="color-picker">
-          <div class="color-option" data-color="#6a11cb" style="background: #6a11cb;"></div>
-          <div class="color-option" data-color="#2575fc" style="background: #2575fc;"></div>
-          <div class="color-option" data-color="#4CAF50" style="background: #4CAF50;"></div>
-          <div class="color-option" data-color="#FF9800" style="background: #FF9800;"></div>
-          <div class="color-option" data-color="#E91E63" style="background: #E91E63;"></div>
-        </div>
-      </div>
-      <div class="modal-actions">
-        <button class="btn btn-cancel">Cancelar</button>
-        <button class="btn btn-confirm">Salvar</button>
-      </div>
-    </div>
-  </div>
-
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  
   <script>
-    // Configuração Firebase (seu config permanece o mesmo)
+    // Configuração do Firebase (substitua com suas credenciais)
     const firebaseConfig = {
       apiKey: "AIzaSyDa8KrTqqA6fmPDNRrha074cDhCGXaLB_o",
       authDomain: "tarefas-app-e3e0c.firebaseapp.com",
@@ -167,18 +391,23 @@
       messagingSenderId: "1005383302041",
       appId: "1:1005383302041:web:852b17f5bca487d364f108"
     };
+    
+    // Inicializar Firebase
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
+    
+    // Referência para os dados no Firebase
     const listasRef = database.ref('listasCasal');
+    
+    // Elementos do DOM
     const listasContainer = document.getElementById("listas-container");
     const statusIndicator = document.getElementById("status-indicator");
     const statusText = document.getElementById("status-text");
     const lastUpdated = document.getElementById("last-updated");
-
+    
+    // Estado do aplicativo
     let listas = [];
-    let currentListIndex = null;
-    let selectedColor = '#6a11cb';
-
+    
     // Atualizar status de conexão
     database.ref(".info/connected").on("value", (snapshot) => {
       if (snapshot.val() === true) {
@@ -190,43 +419,63 @@
         statusText.textContent = "Offline - Reconectando...";
       }
     });
-
+    
     // Atualizar última conexão
     database.ref(".info/serverTimeOffset").on("value", (snapshot) => {
       const offset = snapshot.val() || 0;
       const now = new Date(Date.now() + offset);
       lastUpdated.textContent = `Última atualização: ${now.toLocaleTimeString()}`;
     });
-
-    // Carregar dados do Firebase
+    
+    // Carregar dados
     function loadData() {
-      listasRef.once("value")
-        .then((snapshot) => {
-          const data = snapshot.val();
-          if (data) {
-            listas = Array.isArray(data) ? data : [];
-            renderListas();
-          } else {
-            initializeDefaultLists();
-          }
-        })
-        .catch((error) => {
-          console.error("Erro ao carregar:", error);
-          showError();
-        });
-    }
-    function initializeDefaultLists() {
-      listas = [
-        { nome: "Tarefas Diárias Casal", color: '#6a11cb', itens: [] },
-        { nome: "Tarefas Esposa", color: '#2575fc', itens: [] },
-        { nome: "Tarefas Esposo", color: '#4CAF50', itens: [] },
-        { nome: "Compras da Semana", color: '#FF9800', itens: [] },
-        { nome: "Compras do Mês", color: '#E91E63', itens: [] },
-        { nome: "Lista de Sonhos", color: '#6a11cb', itens: [] }
-      ];
-      salvarNoFirebase();
-    }
+  listasRef.once("value")
+    .then((snapshot) => {
+      const data = snapshot.val();
+      
+      // Verifica e corrige a estrutura dos dados
+      if (data) {
+        listas = Array.isArray(data) ? 
+          data.map(item => ({
+            nome: item.nome || item.none || "Lista sem nome", // Corrige "none" para "nome"
+            itens: item.itens || []
+          })) : [];
+        
+        // Se estiver vazio ou corrigido, salva a estrutura correta
+        if (listas.length === 0 || data[0].none) {
+          listas = [
+            {nome: "Tarefas Diárias Casal", itens: []},
+            {nome: "Tarefas Esposa", itens: []},
+            {nome: "Tarefas Esposo", itens: []},
+            {nome: "Compras da Semana", itens: []},
+            {nome: "Compras do Mês", itens: []},
+            {nome: "Lista de Sonhos", itens: []}
+          ];
+          return salvarNoFirebase();
+        }
+        renderListas();
+      } else {
+        initializeDefaultLists();
+      }
+    })
+    .catch((error) => {
+      console.error("Erro ao carregar:", error);
+      showError();
+    });
+}
 
+function initializeDefaultLists() {
+  listas = [
+    {nome: "Tarefas Diárias Casal", itens: []},
+    {nome: "Tarefas Esposa", itens: []},
+    {nome: "Tarefas Esposo", itens: []},
+    {nome: "Compras da Semana", itens: []},
+    {nome: "Compras do Mês", itens: []},
+    {nome: "Lista de Sonhos", itens: []}
+  ];
+  salvarNoFirebase();
+}
+    
     // Mostrar erro
     function showError() {
       listasContainer.innerHTML = `
@@ -239,113 +488,38 @@
         </div>
       `;
     }
-
-    // Modal: abrir e fechar
-    function openListModal(index = null) {
-      const modal = document.getElementById('list-modal');
-      const title = document.getElementById('modal-title');
-      const nameInput = document.getElementById('list-name');
-      currentListIndex = index;
-      if (index !== null) {
-        title.textContent = 'Editar Lista';
-        nameInput.value = listas[index].nome;
-        selectedColor = listas[index].color || '#6a11cb';
-      } else {
-        title.textContent = 'Nova Lista';
-        nameInput.value = '';
-        selectedColor = '#6a11cb';
-      }
-      updateColorPicker();
-      modal.classList.add('active');
-    }
-    function updateColorPicker() {
-      document.querySelectorAll('.color-option').forEach(option => {
-        option.classList.toggle('selected', option.dataset.color === selectedColor);
-      });
-    }
-    document.getElementById('color-picker').addEventListener('click', (e) => {
-      if (e.target.classList.contains('color-option')) {
-        selectedColor = e.target.dataset.color;
-        updateColorPicker();
-      }
-    });
-    document.querySelector('.btn-cancel').addEventListener('click', () => {
-      document.getElementById('list-modal').classList.remove('active');
-    });
-    document.querySelector('.btn-confirm').addEventListener('click', () => {
-      const name = document.getElementById('list-name').value.trim();
-      if (name) {
-        if (currentListIndex !== null) {
-          listas[currentListIndex].nome = name;
-          listas[currentListIndex].color = selectedColor;
-        } else {
-          listas.push({ nome: name, color: selectedColor, itens: [] });
-        }
-        salvarNoFirebase();
-        document.getElementById('list-modal').classList.remove('active');
-      }
-    });
-
-    // Botão Nova Lista
-    function addNewListButton() {
-      const header = document.querySelector('header');
-      const btn = document.createElement('button');
-      btn.className = 'btn-add-list';
-      btn.innerHTML = '<i class="material-icons">add</i> Nova Lista';
-      btn.addEventListener('click', () => openListModal());
-      header.appendChild(btn);
-    }
-
+    
     // Renderizar listas
     function renderListas() {
-      listasContainer.innerHTML = '';
+      listasContainer.innerHTML = "";
+      
       if (listas.length === 0) {
         listasContainer.innerHTML = `
           <div class="lista">
             <div class="empty-state">
               <i class="material-icons">checklist</i>
               <p>Nenhuma lista criada ainda</p>
-              <button onclick="openListModal()">Criar Primeira Lista</button>
             </div>
           </div>
         `;
         return;
       }
+      
       listas.forEach((lista, idx) => {
-        const div = document.createElement('div');
-        div.className = 'lista';
-        div.style.borderTop = `4px solid ${lista.color || '#6a11cb'}`;
-        const listActions = document.createElement('div');
-        listActions.className = 'list-actions';
-        listActions.innerHTML = `
-          <button class="btn btn-edit" title="Editar">
-            <i class="material-icons">edit</i>
-          </button>
-          <button class="btn btn-delete-list" title="Excluir">
-            <i class="material-icons">delete</i>
-          </button>
-        `;
-        div.appendChild(listActions);
-        div.innerHTML += `
+        const div = document.createElement("div");
+        div.className = "lista";
+        div.innerHTML = `
           <h2>
             <i class="material-icons">${getListIcon(lista.nome)}</i>
             ${lista.nome}
           </h2>
         `;
-        // Adicionar eventos dos botões de ação
-        listActions.querySelector('.btn-edit').addEventListener('click', () => openListModal(idx));
-        listActions.querySelector('.btn-delete-list').addEventListener('click', () => {
-          if (confirm(`Tem certeza que deseja excluir a lista "${lista.nome}"?`)) {
-            listas.splice(idx, 1);
-            salvarNoFirebase();
-          }
-        });
-
-        // Renderizar itens da lista
-        const ul = document.createElement('ul');
+        
+        const ul = document.createElement("ul");
+        
         if (lista.itens.length === 0) {
-          const empty = document.createElement('div');
-          empty.className = 'empty-state';
+          const empty = document.createElement("div");
+          empty.className = "empty-state";
           empty.innerHTML = `
             <i class="material-icons">checklist</i>
             <p>Nenhum item nesta lista</p>
@@ -353,8 +527,9 @@
           ul.appendChild(empty);
         } else {
           lista.itens.forEach((item, i) => {
-            const li = document.createElement('li');
-            li.className = item.done ? 'done' : '';
+            const li = document.createElement("li");
+            li.className = item.done ? "done" : "";
+            
             li.innerHTML = `
               <div class="item-content">
                 <div class="checkmark"></div>
@@ -366,21 +541,24 @@
                 </button>
               </div>
             `;
+            
             // Marcar como feito/não feito
             li.querySelector('.item-content').addEventListener('click', () => {
               item.done = !item.done;
               salvarNoFirebase();
             });
+            
             // Excluir item
             li.querySelector('.btn-delete').addEventListener('click', (e) => {
               e.stopPropagation();
               lista.itens.splice(i, 1);
               salvarNoFirebase();
             });
+            
             ul.appendChild(li);
           });
         }
-        // Adicionar novos itens
+        
         const addDiv = document.createElement("div");
         addDiv.className = "add-item";
         addDiv.innerHTML = `
@@ -389,27 +567,33 @@
             <i class="material-icons">add</i>
           </button>
         `;
+        
         const input = addDiv.querySelector('.new-item-input');
         const btnAdd = addDiv.querySelector('.btn-add');
+        
+        // Adicionar item
         btnAdd.addEventListener('click', () => {
           if (input.value.trim() !== "") {
             if (!lista.itens) lista.itens = [];
-            lista.itens.push({ texto: input.value, done: false });
+            lista.itens.push({texto: input.value, done: false});
             input.value = "";
             salvarNoFirebase();
           }
         });
+        
+        // Adicionar com Enter
         input.addEventListener('keypress', (e) => {
           if (e.key === 'Enter') {
             btnAdd.click();
           }
         });
+        
         div.appendChild(ul);
         div.appendChild(addDiv);
         listasContainer.appendChild(div);
       });
     }
-
+    
     // Salvar no Firebase
     function salvarNoFirebase() {
       listasRef.set(listas)
@@ -419,7 +603,8 @@
           showError();
         });
     }
-    // Ícone de cada lista
+    
+    // Obter ícone apropriado para cada lista
     function getListIcon(nome) {
       if (nome.includes('Diárias')) return 'event';
       if (nome.includes('Esposa') || nome.includes('Esposo')) return 'person';
@@ -427,8 +612,6 @@
       if (nome.includes('Sonhos')) return 'star';
       return 'list';
     }
-    // Adiciona botão Nova Lista no header
-    addNewListButton();
   </script>
 </body>
 </html>
