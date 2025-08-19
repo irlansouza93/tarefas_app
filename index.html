@@ -4,10 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Listas do Casal</title>
-  <!-- Importar Material Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <!-- Adicionado Font Awesome para novos ícones (se necessário) -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     :root {
       --primary: #6a11cb;
@@ -47,54 +44,43 @@
       padding: 1.5rem;
       text-align: center;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      margin-bottom: 2rem;
+      margin-bottom: 1rem;
       position: sticky;
       top: 0;
       z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .header-content {
+      flex-grow: 1;
     }
     
     header h1 {
       font-weight: 600;
-      font-size: 2.2rem;
+      font-size: 1.8rem;
       letter-spacing: 1px;
       margin: 0;
       text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-
-    /* Botão nova lista */
-    .btn-add-list {
-      background: var(--primary-light);
-      color: white;
-      border: none;
-      border-radius: 24px;
-      padding: 0.5rem 1.2rem;
-      font-size: 1rem;
-      margin-left: 1rem;
-      cursor: pointer;
-      display: inline-flex;
+      display: flex;
       align-items: center;
+      justify-content: center;
       gap: 0.5rem;
-      transition: var(--transition);
-      box-shadow: 0 4px 10px rgba(106, 17, 203, 0.2);
-      position: absolute;
-      right: 2rem;
-      top: 2.2rem;
-      z-index: 100;
     }
-    .btn-add-list:hover {
-      background: var(--primary);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 14px rgba(106, 17, 203, 0.4);
-    }
-
+    
     .status-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 1rem;
-      margin-bottom: 1.5rem;
+      padding: 0.5rem 1.5rem;
+      margin-bottom: 1rem;
       color: white;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
+      background: rgba(0,0,0,0.15);
+      border-radius: var(--border-radius);
+      max-width: 1400px;
+      margin: 0 auto 1.5rem;
     }
     
     .connection-status {
@@ -104,8 +90,8 @@
     }
     
     .status-indicator {
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
       background-color: var(--success);
       box-shadow: 0 0 8px var(--success);
@@ -138,6 +124,12 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.5);
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     
     .lista:hover {
@@ -152,13 +144,11 @@
       left: 0;
       width: 100%;
       height: 5px;
-      background: linear-gradient(90deg, var(--primary-light), var(--secondary));
     }
     
     .lista h2 {
       margin: 0 0 1rem 0;
       font-weight: 600;
-      color: var(--primary);
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -200,16 +190,16 @@
       border-bottom: 1px solid rgba(0,0,0,0.05);
       transition: var(--transition);
       border-radius: 8px;
-      animation: fadeIn 0.4s ease-out;
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
     }
     
     li:hover {
       background: rgba(106, 17, 203, 0.05);
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
     }
     
     li.done span {
@@ -242,16 +232,16 @@
       animation: checkmarkPop 0.4s ease;
     }
     
-    li.done .checkmark::after {
-      content: '✓';
-      color: white;
-      font-size: 12px;
-    }
-
     @keyframes checkmarkPop {
       0% { transform: scale(1); }
       50% { transform: scale(1.3); }
       100% { transform: scale(1); }
+    }
+    
+    li.done .checkmark::after {
+      content: '✓';
+      color: white;
+      font-size: 12px;
     }
     
     .actions {
@@ -271,11 +261,27 @@
       cursor: pointer;
       transition: var(--transition);
       color: var(--gray);
+      position: relative;
     }
     
     .btn:hover {
       background: rgba(0,0,0,0.05);
       color: var(--accent);
+    }
+    
+    .btn:hover::after {
+      content: attr(title);
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      z-index: 1000;
     }
     
     .btn i {
@@ -317,12 +323,28 @@
       cursor: pointer;
       transition: var(--transition);
       box-shadow: 0 4px 10px rgba(106, 17, 203, 0.3);
+      position: relative;
     }
     
     .btn-add:hover {
       background: var(--primary);
       transform: translateY(-2px);
       box-shadow: 0 6px 14px rgba(106, 17, 203, 0.4);
+    }
+    
+    .btn-add:hover::after {
+      content: "Adicionar nova lista";
+      position: absolute;
+      bottom: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      z-index: 1000;
     }
     
     .btn-add i {
@@ -372,8 +394,7 @@
       50% { opacity: 1; }
       100% { opacity: 0.6; }
     }
-
-    /* Novos estilos adicionados */
+    
     .list-actions {
       display: flex;
       justify-content: flex-end;
@@ -390,6 +411,7 @@
       display: flex;
       gap: 0.5rem;
       margin-top: 1rem;
+      flex-wrap: wrap;
     }
     
     .color-option {
@@ -447,27 +469,272 @@
       gap: 1rem;
       margin-top: 1.5rem;
     }
+    
+    .btn-add-list {
+      background: var(--primary-light);
+      color: white;
+      border: none;
+      padding: 0.5rem;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(106, 17, 203, 0.3);
+      font-size: 0.9rem;
+      width: 48px;
+      height: 48px;
+      position: relative;
+    }
+    
+    .btn-add-list:hover {
+      background: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(106, 17, 203, 0.4);
+    }
+    
+    .btn-add-list:hover::after {
+      content: "Nova Lista";
+      position: absolute;
+      bottom: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      z-index: 1000;
+    }
+    
+    .btn-archive {
+      background: var(--primary-light);
+      color: white;
+      border: none;
+      padding: 0.5rem;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(106, 17, 203, 0.3);
+      font-size: 0.9rem;
+      width: 40px;
+      height: 40px;
+      position: relative;
+    }
+    
+    .btn-archive:hover {
+      background: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(106, 17, 203, 0.4);
+    }
+    
+    .btn-archive:hover::after {
+      content: "Listas Arquivadas";
+      position: absolute;
+      bottom: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      z-index: 1000;
+    }
+    
     @media (max-width: 768px) {
       .container {
         grid-template-columns: 1fr;
         padding: 0 1rem;
       }
       
+      header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
       header h1 {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
       }
-      .btn-add-list {
-        right: 1rem;
-        top: 1.3rem;
-        font-size: 0.95rem;
+      
+      .status-bar {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.75rem;
       }
+    }
+    
+    @media (max-width: 480px) {
+      .lista {
+        padding: 1rem;
+      }
+      
+      .modal-content {
+        padding: 1.5rem;
+      }
+    }
+    
+    .fade-out {
+      animation: fadeOut 0.3s forwards;
+    }
+    
+    @keyframes fadeOut {
+      to { opacity: 0; transform: translateY(20px); }
+    }
+    
+    .slide-in {
+      animation: slideIn 0.3s forwards;
+    }
+    
+    .pop {
+      animation: pop 0.3s ease;
+    }
+    
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--dark);
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.2);
+    }
+    
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .btn-danger:hover {
+      background: #c82333;
+    }
+    
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+    
+    .btn-primary {
+      background: var(--primary-light);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .btn-primary:hover {
+      background: var(--primary);
+    }
+    
+    .delete-warning {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 4px;
+    }
+    
+    .header-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .archived-badge {
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      position: absolute;
+      top: -5px;
+      right: -5px;
+    }
+    
+    .archived-list-item {
+      background: rgba(255,255,255,0.8);
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    .archived-list-item h3 {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .archived-list-actions {
+      display: flex;
+      gap: 0.5rem;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1><i class="material-icons">favorite</i> Listas do Casal</h1>
-    <!-- Botão Nova Lista será adicionado via JS -->
+    <div class="header-content">
+      <h1><i class="material-icons">favorite</i> Listas do Casal</h1>
+    </div>
+    <div class="header-actions">
+      <button class="btn-archive" id="btn-archive" title="Listas Arquivadas">
+        <i class="material-icons">archive</i>
+        <span class="archived-badge" id="archived-badge">0</span>
+      </button>
+      <button class="btn-add-list" id="btn-add-list" title="Nova Lista">
+        <i class="material-icons">add</i>
+      </button>
+    </div>
   </header>
   
   <div class="status-bar">
@@ -491,7 +758,7 @@
     <p>Sincronização em tempo real com Firebase | Desenvolvido com ❤️ para casais</p>
   </div>
 
-  <!-- Modal Nova/Editar Lista -->
+  <!-- Modal para criar/editar listas -->
   <div class="modal" id="list-modal">
     <div class="modal-content">
       <h2 id="modal-title">Nova Lista</h2>
@@ -508,12 +775,44 @@
           <div class="color-option" data-color="#4CAF50" style="background: #4CAF50;"></div>
           <div class="color-option" data-color="#FF9800" style="background: #FF9800;"></div>
           <div class="color-option" data-color="#E91E63" style="background: #E91E63;"></div>
+          <div class="color-option" data-color="#9C27B0" style="background: #9C27B0;"></div>
+          <div class="color-option" data-color="#2196F3" style="background: #2196F3;"></div>
+          <div class="color-option" data-color="#00BCD4" style="background: #00BCD4;"></div>
         </div>
       </div>
       
       <div class="modal-actions">
-        <button class="btn btn-cancel">Cancelar</button>
-        <button class="btn btn-confirm">Salvar</button>
+        <button class="btn-danger" id="btn-delete-modal">Excluir Lista</button>
+        <div>
+          <button class="btn-secondary" id="btn-cancel">Cancelar</button>
+          <button class="btn-primary" id="btn-confirm">Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmação de exclusão -->
+  <div class="modal" id="delete-confirm-modal">
+    <div class="modal-content">
+      <h2><i class="material-icons" style="color: #dc3545;">warning</i> Excluir Lista</h2>
+      <div class="delete-warning">
+        <p>Tem certeza que deseja excluir permanentemente esta lista?</p>
+        <p><strong>Todos os dados serão permanentemente excluídos e não poderão ser recuperados.</strong></p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="btn-cancel-delete">Cancelar</button>
+        <button class="btn-danger" id="btn-confirm-delete">Excluir Permanentemente</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de listas arquivadas -->
+  <div class="modal" id="archived-modal">
+    <div class="modal-content">
+      <h2><i class="material-icons">archive</i> Listas Arquivadas</h2>
+      <div id="archived-list-container"></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="btn-close-archived">Fechar</button>
       </div>
     </div>
   </div>
@@ -523,7 +822,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
   
   <script>
-    // Configuração do Firebase (substitua com suas credenciais)
+    // Configuração do Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyDa8KrTqqA6fmPDNRrha074cDhCGXaLB_o",
       authDomain: "tarefas-app-e3e0c.firebaseapp.com",
@@ -546,14 +845,16 @@
     const statusIndicator = document.getElementById("status-indicator");
     const statusText = document.getElementById("status-text");
     const lastUpdated = document.getElementById("last-updated");
+    const btnAddList = document.getElementById("btn-add-list");
+    const btnArchive = document.getElementById("btn-archive");
+    const archivedBadge = document.getElementById("archived-badge");
+    const archivedListContainer = document.getElementById("archived-list-container");
     
     // Estado do aplicativo
     let listas = [];
-
-    // Novas variáveis globais para modal
     let currentListIndex = null;
     let selectedColor = '#6a11cb';
-
+    
     // Atualizar status de conexão
     database.ref(".info/connected").on("value", (snapshot) => {
       if (snapshot.val() === true) {
@@ -578,46 +879,37 @@
       listasRef.once("value")
         .then((snapshot) => {
           const data = snapshot.val();
-          // Verifica e corrige a estrutura dos dados
+          
           if (data) {
-            listas = Array.isArray(data) ?
-              data.map(item => ({
-                nome: item.nome || item.none || "Lista sem nome", // Corrige "none" para "nome"
-                itens: item.itens || [],
-                color: item.color || '#6a11cb'
-              })) : [];
-            
-            // Se estiver vazio ou corrigido, salva a estrutura correta
-            if (listas.length === 0 || data[0].none) {
-              listas = [
-                {nome: "Tarefas Diárias Casal", itens: [], color: "#6a11cb"},
-                {nome: "Tarefas Esposa", itens: [], color: "#E91E63"},
-                {nome: "Tarefas Esposo", itens: [], color: "#2575fc"},
-                {nome: "Compras da Semana", itens: [], color: "#FF9800"},
-                {nome: "Compras do Mês", itens: [], color: "#4CAF50"},
-                {nome: "Lista de Sonhos", itens: [], color: "#8e2de2"}
-              ];
-              return salvarNoFirebase();
-            }
+            listas = data;
+            updateArchivedBadge();
             renderListas();
           } else {
             initializeDefaultLists();
           }
         })
         .catch((error) => {
-          console.error("Erro ao carregar:", error);
+          console.error("Erro ao carregar dados:", error);
           showError();
         });
     }
-
+    
+    // Atualizar badge de listas arquivadas
+    function updateArchivedBadge() {
+      const archivedCount = listas.filter(lista => lista.archived).length;
+      archivedBadge.textContent = archivedCount;
+      archivedBadge.style.display = archivedCount > 0 ? 'flex' : 'none';
+    }
+    
+    // Inicializar listas padrão
     function initializeDefaultLists() {
       listas = [
-        {nome: "Tarefas Diárias Casal", itens: [], color: "#6a11cb"},
-        {nome: "Tarefas Esposa", itens: [], color: "#E91E63"},
-        {nome: "Tarefas Esposo", itens: [], color: "#2575fc"},
-        {nome: "Compras da Semana", itens: [], color: "#FF9800"},
-        {nome: "Compras do Mês", itens: [], color: "#4CAF50"},
-        {nome: "Lista de Sonhos", itens: [], color: "#8e2de2"}
+        {nome: "Tarefas Diárias Casal", itens: [], color: '#6a11cb', archived: false},
+        {nome: "Tarefas Esposa", itens: [], color: '#2575fc', archived: false},
+        {nome: "Tarefas Esposo", itens: [], color: '#4CAF50', archived: false},
+        {nome: "Compras da Semana", itens: [], color: '#FF9800', archived: false},
+        {nome: "Compras do Mês", itens: [], color: '#E91E63', archived: false},
+        {nome: "Lista de Sonhos", itens: [], color: '#9C27B0', archived: false}
       ];
       salvarNoFirebase();
     }
@@ -635,62 +927,66 @@
       `;
     }
     
-    // Renderizar listas (atualizada para incluir ações de lista)
+    // Renderizar listas
     function renderListas() {
-      listasContainer.innerHTML = "";
-
-      if (listas.length === 0) {
+      listasContainer.innerHTML = '';
+      
+      const activeListas = listas.filter(lista => !lista.archived);
+      
+      if (activeListas.length === 0) {
         listasContainer.innerHTML = `
           <div class="lista">
             <div class="empty-state">
               <i class="material-icons">checklist</i>
-              <p>Nenhuma lista criada ainda</p>
+              <p>Nenhuma lista ativa no momento</p>
               <button onclick="openListModal()">Criar Primeira Lista</button>
             </div>
           </div>
         `;
         return;
       }
-
-      listas.forEach((lista, idx) => {
-        const div = document.createElement("div");
-        div.className = "lista";
+      
+      activeListas.forEach((lista, idx) => {
+        const originalIndex = listas.findIndex(l => l.nome === lista.nome);
+        const div = document.createElement('div');
+        div.className = 'lista';
         div.style.borderTop = `4px solid ${lista.color || '#6a11cb'}`;
         
-        // Ações da lista (editar/excluir)
-        const listActions = document.createElement("div");
-        listActions.className = "list-actions";
+        const listActions = document.createElement('div');
+        listActions.className = 'list-actions';
         listActions.innerHTML = `
-          <button class="btn btn-edit" title="Editar">
+          <button class="btn btn-edit" title="Editar Lista">
             <i class="material-icons">edit</i>
           </button>
-          <button class="btn btn-delete-list" title="Excluir">
-            <i class="material-icons">delete</i>
+          <button class="btn btn-archive-list" title="Arquivar Lista">
+            <i class="material-icons">archive</i>
           </button>
         `;
-        div.appendChild(listActions);
-
-        div.innerHTML += `
+        
+        div.innerHTML = `
           <h2>
             <i class="material-icons">${getListIcon(lista.nome)}</i>
             ${lista.nome}
           </h2>
         `;
         
-        const ul = document.createElement("ul");
+        div.insertBefore(listActions, div.firstChild);
         
-        if (lista.itens.length === 0) {
-          const empty = document.createElement("div");
-          empty.className = "empty-state";
+        const ul = document.createElement('ul');
+        
+        if (lista.itens && lista.itens.length === 0) {
+          const empty = document.createElement('div');
+          empty.className = 'empty-state';
           empty.innerHTML = `
             <i class="material-icons">checklist</i>
             <p>Nenhum item nesta lista</p>
           `;
           ul.appendChild(empty);
-        } else {
+        } else if (lista.itens) {
           lista.itens.forEach((item, i) => {
-            const li = document.createElement("li");
-            li.className = item.done ? "done" : "";
+            const li = document.createElement('li');
+            li.className = item.done ? 'done' : '';
+            li.dataset.index = i;
             
             li.innerHTML = `
               <div class="item-content">
@@ -698,7 +994,7 @@
                 <span>${item.texto}</span>
               </div>
               <div class="actions">
-                <button class="btn btn-delete" title="Excluir">
+                <button class="btn btn-delete" title="Excluir Tarefa">
                   <i class="material-icons">delete</i>
                 </button>
               </div>
@@ -707,25 +1003,37 @@
             // Marcar como feito/não feito
             li.querySelector('.item-content').addEventListener('click', () => {
               item.done = !item.done;
+              li.classList.toggle('done', item.done);
+              
+              // Animação de confirmação
+              const checkmark = li.querySelector('.checkmark');
+              checkmark.classList.add('pop');
+              setTimeout(() => checkmark.classList.remove('pop'), 300);
+              
               salvarNoFirebase();
             });
             
             // Excluir item
             li.querySelector('.btn-delete').addEventListener('click', (e) => {
               e.stopPropagation();
-              lista.itens.splice(i, 1);
-              salvarNoFirebase();
+              
+              // Animação de remoção
+              li.classList.add('fade-out');
+              setTimeout(() => {
+                lista.itens.splice(i, 1);
+                salvarNoFirebase();
+              }, 300);
             });
             
             ul.appendChild(li);
           });
         }
         
-        const addDiv = document.createElement("div");
-        addDiv.className = "add-item";
+        const addDiv = document.createElement('div');
+        addDiv.className = 'add-item';
         addDiv.innerHTML = `
           <input type="text" placeholder="Adicionar novo item..." class="new-item-input">
-          <button class="btn-add" title="Adicionar">
+          <button class="btn-add" title="Adicionar Tarefa">
             <i class="material-icons">add</i>
           </button>
         `;
@@ -737,8 +1045,60 @@
         btnAdd.addEventListener('click', () => {
           if (input.value.trim() !== "") {
             if (!lista.itens) lista.itens = [];
-            lista.itens.push({texto: input.value, done: false});
+            
+            // Animação de adição
+            const newItem = {texto: input.value, done: false};
+            lista.itens.push(newItem);
             input.value = "";
+            
+            // Adiciona com animação
+            const li = document.createElement('li');
+            li.className = 'slide-in';
+            li.innerHTML = `
+              <div class="item-content">
+                <div class="checkmark"></div>
+                <span>${newItem.texto}</span>
+              </div>
+              <div class="actions">
+                <button class="btn btn-delete" title="Excluir Tarefa">
+                  <i class="material-icons">delete</i>
+                </button>
+              </div>
+            `;
+            
+            // Eventos para o novo item
+            li.querySelector('.item-content').addEventListener('click', () => {
+              newItem.done = !newItem.done;
+              li.classList.toggle('done', newItem.done);
+              
+              // Animação
+              const checkmark = li.querySelector('.checkmark');
+              checkmark.classList.add('pop');
+              setTimeout(() => checkmark.classList.remove('pop'), 300);
+              
+              salvarNoFirebase();
+            });
+            
+            li.querySelector('.btn-delete').addEventListener('click', (e) => {
+              e.stopPropagation();
+              li.classList.add('fade-out');
+              setTimeout(() => {
+                const index = lista.itens.findIndex(item => item.texto === newItem.texto);
+                if (index !== -1) {
+                  lista.itens.splice(index, 1);
+                  salvarNoFirebase();
+                }
+              }, 300);
+            });
+            
+            if (lista.itens.length === 1) {
+              ul.innerHTML = '';
+            }
+            ul.appendChild(li);
+            
+            // Scroll para o novo item
+            ul.scrollTop = ul.scrollHeight;
+            
             salvarNoFirebase();
           }
         });
@@ -749,27 +1109,94 @@
             btnAdd.click();
           }
         });
-
+        
         div.appendChild(ul);
         div.appendChild(addDiv);
-
-        // Adicione eventos para os botões de ação da lista
-        listActions.querySelector('.btn-edit').addEventListener('click', () => openListModal(idx));
-        listActions.querySelector('.btn-delete-list').addEventListener('click', () => {
-          if (confirm(`Tem certeza que deseja excluir a lista "${lista.nome}"?`)) {
-            listas.splice(idx, 1);
+        
+        // Adicionar eventos para os botões de ação da lista
+        div.querySelector('.btn-edit').addEventListener('click', () => openListModal(originalIndex));
+        div.querySelector('.btn-archive-list').addEventListener('click', () => {
+          // Animação de arquivamento
+          div.classList.add('fade-out');
+          setTimeout(() => {
+            listas[originalIndex].archived = true;
+            updateArchivedBadge();
             salvarNoFirebase();
-          }
+          }, 300);
         });
-
+        
         listasContainer.appendChild(div);
       });
+    }
+    
+    // Mostrar listas arquivadas
+    function showArchivedLists() {
+      archivedListContainer.innerHTML = '';
+      
+      const archivedListas = listas.filter(lista => lista.archived);
+      
+      if (archivedListas.length === 0) {
+        archivedListContainer.innerHTML = `
+          <div class="empty-state">
+            <i class="material-icons">archive</i>
+            <p>Nenhuma lista arquivada</p>
+          </div>
+        `;
+      } else {
+        archivedListas.forEach((lista, index) => {
+          const originalIndex = listas.findIndex(l => l.nome === lista.nome);
+          const listElement = document.createElement('div');
+          listElement.className = 'archived-list-item';
+          listElement.style.borderLeft = `4px solid ${lista.color || '#6a11cb'}`;
+          
+          listElement.innerHTML = `
+            <h3>
+              <i class="material-icons">${getListIcon(lista.nome)}</i>
+              ${lista.nome}
+            </h3>
+            <div class="archived-list-actions">
+              <button class="btn btn-restore" title="Restaurar Lista">
+                <i class="material-icons">unarchive</i>
+              </button>
+              <button class="btn btn-delete-list" title="Excluir Permanentemente">
+                <i class="material-icons">delete_forever</i>
+              </button>
+            </div>
+          `;
+          
+          listElement.querySelector('.btn-restore').addEventListener('click', () => {
+            listas[originalIndex].archived = false;
+            updateArchivedBadge();
+            salvarNoFirebase();
+            renderArchivedLists();
+          });
+          
+          listElement.querySelector('.btn-delete-list').addEventListener('click', () => {
+            openDeleteModal(originalIndex);
+          });
+          
+          archivedListContainer.appendChild(listElement);
+        });
+      }
+      
+      document.getElementById('archived-modal').classList.add('active');
+    }
+    
+    // Renderizar listas arquivadas (para atualização em tempo real)
+    function renderArchivedLists() {
+      if (document.getElementById('archived-modal').classList.contains('active')) {
+        showArchivedLists();
+      }
     }
     
     // Salvar no Firebase
     function salvarNoFirebase() {
       listasRef.set(listas)
-        .then(() => console.log("Dados salvos com sucesso!"))
+        .then(() => {
+          console.log("Dados salvos com sucesso!");
+          renderListas();
+          renderArchivedLists();
+        })
         .catch((error) => {
           console.error("Erro ao salvar:", error);
           showError();
@@ -784,12 +1211,13 @@
       if (nome.includes('Sonhos')) return 'star';
       return 'list';
     }
-
-    // -------- Modal de Nova/Editar Lista --------
+    
+    // Modal functions
     function openListModal(index = null) {
       const modal = document.getElementById('list-modal');
       const title = document.getElementById('modal-title');
       const nameInput = document.getElementById('list-name');
+      const deleteBtn = document.getElementById('btn-delete-modal');
       
       currentListIndex = index;
       
@@ -797,35 +1225,50 @@
         title.textContent = 'Editar Lista';
         nameInput.value = listas[index].nome;
         selectedColor = listas[index].color || '#6a11cb';
+        deleteBtn.style.display = 'block';
       } else {
         title.textContent = 'Nova Lista';
         nameInput.value = '';
         selectedColor = '#6a11cb';
+        deleteBtn.style.display = 'none';
       }
       
       updateColorPicker();
       modal.classList.add('active');
     }
-
+    
     function updateColorPicker() {
       document.querySelectorAll('.color-option').forEach(option => {
         option.classList.toggle('selected', option.dataset.color === selectedColor);
       });
     }
-
+    
+    // Abrir modal de exclusão
+    function openDeleteModal(index) {
+      currentListIndex = index;
+      document.getElementById('delete-confirm-modal').classList.add('active');
+      document.getElementById('archived-modal').classList.remove('active');
+    }
+    
+    // Event listeners
     document.getElementById('color-picker').addEventListener('click', (e) => {
       if (e.target.classList.contains('color-option')) {
         selectedColor = e.target.dataset.color;
         updateColorPicker();
+        
+        // Animação de seleção
+        e.target.classList.add('pop');
+        setTimeout(() => e.target.classList.remove('pop'), 300);
       }
     });
-
-    document.querySelector('.btn-cancel').addEventListener('click', () => {
+    
+    document.getElementById('btn-cancel').addEventListener('click', () => {
       document.getElementById('list-modal').classList.remove('active');
     });
-
-    document.querySelector('.btn-confirm').addEventListener('click', () => {
+    
+    document.getElementById('btn-confirm').addEventListener('click', () => {
       const name = document.getElementById('list-name').value.trim();
+      
       if (name) {
         if (currentListIndex !== null) {
           // Editar lista existente
@@ -836,28 +1279,54 @@
           listas.push({
             nome: name,
             color: selectedColor,
-            itens: []
+            itens: [],
+            archived: false
           });
         }
+        
         salvarNoFirebase();
         document.getElementById('list-modal').classList.remove('active');
+      } else {
+        // Animação de erro
+        const input = document.getElementById('list-name');
+        input.classList.add('pop');
+        setTimeout(() => input.classList.remove('pop'), 300);
       }
     });
-
-    // Adiciona botão Nova Lista no header, apenas uma vez
-    function addNewListButton() {
-      const header = document.querySelector('header');
-      if (!header.querySelector('.btn-add-list')) {
-        const btn = document.createElement('button');
-        btn.className = 'btn-add-list';
-        btn.innerHTML = '<i class="material-icons">add</i> Nova Lista';
-        btn.addEventListener('click', () => openListModal());
-        header.appendChild(btn);
+    
+    document.getElementById('btn-delete-modal').addEventListener('click', () => {
+      if (currentListIndex !== null) {
+        document.getElementById('list-modal').classList.remove('active');
+        openDeleteModal(currentListIndex);
       }
-    }
-
-    // Garante que o botão exista ao carregar o app
-    addNewListButton();
+    });
+    
+    document.getElementById('btn-cancel-delete').addEventListener('click', () => {
+      document.getElementById('delete-confirm-modal').classList.remove('active');
+      showArchivedLists();
+    });
+    
+    document.getElementById('btn-confirm-delete').addEventListener('click', () => {
+      if (currentListIndex !== null) {
+        listas.splice(currentListIndex, 1);
+        updateArchivedBadge();
+        salvarNoFirebase();
+        document.getElementById('delete-confirm-modal').classList.remove('active');
+      }
+    });
+    
+    document.getElementById('btn-close-archived').addEventListener('click', () => {
+      document.getElementById('archived-modal').classList.remove('active');
+    });
+    
+    // Botão nova lista
+    btnAddList.addEventListener('click', () => openListModal());
+    
+    // Botão listas arquivadas
+    btnArchive.addEventListener('click', showArchivedLists);
+    
+    // Inicializar
+    loadData();
   </script>
 </body>
 </html>
