@@ -306,6 +306,21 @@
       margin-bottom: 1rem;
     }
     
+    .empty-state button {
+      background: var(--primary-light);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      margin-top: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .empty-state button:hover {
+      background: var(--primary);
+    }
+    
     .footer {
       text-align: center;
       color: rgba(255,255,255,0.7);
@@ -349,7 +364,6 @@
   </div>
   
   <div class="container" id="listas-container">
-    <!-- Listas serão renderizadas aqui -->
     <div class="lista pulse" style="height: 300px; background: rgba(255,255,255,0.7);">
       <div class="empty-state">
         <i class="material-icons">hourglass_empty</i>
@@ -368,15 +382,15 @@
   
   <script>
     // Configuração do Firebase (substitua com suas credenciais)
-   const firebaseConfig = {
-  apiKey: "AIzaSyDa8KrTqqA6fmPDNRrha074cDhCGXaLB_o",
-  authDomain: "tarefas-app-e3e0c.firebaseapp.com",
-  databaseURL: "https://tarefas-app-e3e0c-default-rtdb.firebaseio.com",
-  projectId: "tarefas-app-e3e0c",
-  storageBucket: "tarefas-app-e3e0c.firebasestorage.app",
-  messagingSenderId: "1005383302041",
-  appId: "1:1005383302041:web:852b17f5bca487d364f108"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyDa8KrTqqA6fmPDNRrha074cDhCGXaLB_o",
+      authDomain: "tarefas-app-e3e0c.firebaseapp.com",
+      databaseURL: "https://tarefas-app-e3e0c-default-rtdb.firebaseio.com",
+      projectId: "tarefas-app-e3e0c",
+      storageBucket: "tarefas-app-e3e0c.appspot.com",
+      messagingSenderId: "1005383302041",
+      appId: "1:1005383302041:web:852b17f5bca487d364f108"
+    };
     
     // Inicializar Firebase
     firebase.initializeApp(firebaseConfig);
@@ -399,6 +413,7 @@
       if (snapshot.val() === true) {
         statusIndicator.classList.remove("offline");
         statusText.textContent = "Conectado";
+        loadData();
       } else {
         statusIndicator.classList.add("offline");
         statusText.textContent = "Offline - Reconectando...";
@@ -412,37 +427,62 @@
       lastUpdated.textContent = `Última atualização: ${now.toLocaleTimeString()}`;
     });
     
-    // Carregar dados do Firebase
-    listasRef.on("value", (snapshot) => {
-      const data = snapshot.val();
-      
-      if (data) {
-        listas = data;
-        render();
-      } else {
-        // Se não houver dados, inicializar com listas padrão
-        listas = [
-          {nome: "Tarefas Diárias Casal", itens: []},
-          {nome: "Tarefas Esposa", itens: []},
-          {nome: "Tarefas Esposo", itens: []},
-          {nome: "Compras da Semana", itens: []},
-          {nome: "Compras do Mês", itens: []},
-          {nome: "Lista de Sonhos", itens: []}
-        ];
-        salvarNoFirebase();
-      }
-    });
-    
-    // Função para salvar no Firebase
-    function salvarNoFirebase() {
-      listasRef.set(listas)
-        .then(() => console.log("Dados salvos com sucesso!"))
-        .catch((error) => console.error("Erro ao salvar:", error));
+    // Carregar dados
+    function loadData() {
+      listasRef.once("value")
+        .then((snapshot) => {
+          const data = snapshot.val();
+          
+          if (data) {
+            listas = data;
+            renderListas();
+          } else {
+            // Se não houver dados, inicializar com listas padrão
+            listas = [
+              {nome: "Tarefas Diárias Casal", itens: []},
+              {nome: "Tarefas Esposa", itens: []},
+              {nome: "Tarefas Esposo", itens: []},
+              {nome: "Compras da Semana", itens: []},
+              {nome: "Compras do Mês", itens: []},
+              {nome: "Lista de Sonhos", itens: []}
+            ];
+            salvarNoFirebase();
+          }
+        })
+        .catch((error) => {
+          console.error("Erro ao carregar dados:", error);
+          showError();
+        });
     }
     
-    // Função para renderizar as listas
-    function render() {
+    // Mostrar erro
+    function showError() {
+      listasContainer.innerHTML = `
+        <div class="lista" style="background: #ffebee;">
+          <div class="empty-state">
+            <i class="material-icons">error</i>
+            <p>Erro ao carregar listas</p>
+            <button onclick="window.location.reload()">Tentar novamente</button>
+          </div>
+        </div>
+      `;
+    }
+    
+    // Renderizar listas
+    function renderListas() {
       listasContainer.innerHTML = "";
+      
+      if (listas.length === 0) {
+        listasContainer.innerHTML = `
+          <div class="lista">
+            <div class="empty-state">
+              <i class="material-icons">checklist</i>
+              <p>Nenhuma lista criada ainda</p>
+            </div>
+          </div>
+        `;
+        return;
+      }
       
       listas.forEach((lista, idx) => {
         const div = document.createElement("div");
@@ -513,6 +553,7 @@
         // Adicionar item
         btnAdd.addEventListener('click', () => {
           if (input.value.trim() !== "") {
+            if (!lista.itens) lista.itens = [];
             lista.itens.push({texto: input.value, done: false});
             input.value = "";
             salvarNoFirebase();
@@ -532,6 +573,16 @@
       });
     }
     
+    // Salvar no Firebase
+    function salvarNoFirebase() {
+      listasRef.set(listas)
+        .then(() => console.log("Dados salvos com sucesso!"))
+        .catch((error) => {
+          console.error("Erro ao salvar:", error);
+          showError();
+        });
+    }
+    
     // Obter ícone apropriado para cada lista
     function getListIcon(nome) {
       if (nome.includes('Diárias')) return 'event';
@@ -542,4 +593,4 @@
     }
   </script>
 </body>
-  </html>
+</html>
